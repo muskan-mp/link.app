@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Upload Pro - Fixed QR Codes</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --accent: #7209b7;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4cc9f0;
+            --card-shadow: 0 10px 20px rgba(0,0,0,0.12), 0 4px 8px rgba(0,0,0,0.06);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--dark);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeIn 1s ease;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #6c757d;
+            font-size: 1.2rem;
+        }
+        
+        .upload-section {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: var(--card-shadow);
+            animation: slideUp 0.8s ease;
+            text-align: center;
+        }
+        
+        .upload-area {
+            border: 3px dashed #d0d0d0;
+            border-radius: 12px;
+            padding: 40px 20px;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-bottom: 20px;
+        }
+        
+        .upload-area:hover, .upload-area.dragover {
+            border-color: var(--primary);
+            background-color: #f0f4ff;
+        }
+        
+        .upload-area i {
+            font-size: 3.5rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+        
+        .upload-text {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .upload-hint {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        #file-input {
+            display: none;
+        }
+        
+        .btn {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        
+        .btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        
+        .btn i {
+            margin-right: 8px;
+        }
+        
+        .results-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .result-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        
+        .result-card.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .result-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+        
+        .card-header {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            padding: 15px 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .card-header i {
+            margin-right: 10px;
+        }
+        
+        .demo-badge {
+            background: #f72585;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+        }
+        
+        .card-body {
+            padding: 20px;
+        }
+        
+        .image-preview {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .link-container {
+            margin-bottom: 15px;
+        }
+        
+        .link-label {
+            font-weight: 600;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .link-label i {
+            margin-right: 8px;
+            color: var(--primary);
+        }
+        
+        .link-value {
+            display: flex;
+            align-items: center;
+            background: #f8f9fa;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            word-break: break-all;
+            margin-top: 5px;
+        }
+        
+        .copy-btn {
+            background: var(--light);
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 5px 10px;
+            margin-left: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+        }
+        
+        .copy-btn:hover {
+            background: #e9ecef;
+        }
+        
+        .copy-btn.copied {
+            background: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        
+        .copy-btn i {
+            margin-right: 5px;
+            font-size: 0.8rem;
+        }
+        
+        .qr-section {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #dee2e6;
+        }
+        
+        .qr-code {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 15px;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .qr-code img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .btn-sm {
+            padding: 8px 15px;
+            font-size: 0.9rem;
+        }
+        
+        .btn-success {
+            background: linear-gradient(to right, #4cc9f0, #4895ef);
+        }
+        
+        .flash-message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            background: #fff3cd;
+            color: #856404;
+            border-left: 4px solid #ffeeba;
+            animation: slideIn 0.5s ease;
+            display: none;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 0;
+            color: #6c757d;
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 15px;
+            color: #dee2e6;
+        }
+        
+        .file-count {
+            margin-top: 10px;
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        .demo-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .btn-warning {
+            background: linear-gradient(to right, #f72585, #b5179e);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes slideIn {
+            from { 
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .results-section {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .demo-controls {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Image Upload Pro</h1>
+            <p class="subtitle">Upload multiple images and get short links with QR codes</p>
+        </header>
+        
+        <section class="upload-section">
+            <div class="upload-area" id="upload-area">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <p class="upload-text">Drag & drop your images here</p>
+                <p class="upload-hint">or click to browse files</p>
+                <p class="file-count" id="file-count"></p>
+                <input type="file" id="file-input" accept="image/*" multiple>
+            </div>
+            
+            <form method="post" action="/upload" enctype="multipart/form-data" id="upload-form">
+                <input type="file" id="files-input" name="files" accept="image/*" multiple hidden>
+                <button type="submit" class="btn" id="upload-btn" disabled>
+                    <i class="fas fa-upload"></i> Upload Images
+                </button>
+            </form>
+            
+            <div class="demo-controls">
+                <button type="button" class="btn btn-warning" id="show-demo-btn">
+                    <i class="fas fa-eye"></i> Show Demo
+                </button>
+                <button type="button" class="btn" id="hide-demo-btn">
+                    <i class="fas fa-times"></i> Hide Demo
+                </button>
+            </div>
+        </section>
+
+        <div class="flash-message" id="flash-message">
+            <i class="fas fa-exclamation-circle"></i> <span id="flash-text"></span>
+        </div>
+
+        <div class="empty-state" id="empty-state">
+            <i class="fas fa-folder-open"></i>
+            <h3>No images uploaded yet</h3>
+            <p>Upload some images or click "Show Demo" to see examples</p>
+        </div>
+        
+        <section class="results-section" id="results-section">
+            <!-- Results will be displayed here -->
+        </section>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const uploadArea = document.getElementById('upload-area');
+            const fileInput = document.getElementById('file-input');
+            const filesInput = document.getElementById('files-input');
+            const uploadForm = document.getElementById('upload-form');
+            const uploadBtn = document.getElementById('upload-btn');
+            const resultsSection = document.getElementById('results-section');
+            const emptyState = document.getElementById('empty-state');
+            const flashMessage = document.getElementById('flash-message');
+            const flashText = document.getElementById('flash-text');
+            const fileCount = document.getElementById('file-count');
+            const showDemoBtn = document.getElementById('show-demo-btn');
+            const hideDemoBtn = document.getElementById('hide-demo-btn');
+            
+            // Demo data for UI preview with working QR codes
+            const demoResults = [
+                {
+                    original_name: "sunset.jpg",
+                    short_id: "a3f5b2",
+                    short_link: "https://imgup.pro/i/a3f5b2",
+                    long_link: "https://imgup.pro/uploads/a3f5b2.jpg",
+                    file_url: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80",
+                    qr_code: "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://imgup.pro/i/a3f5b2",
+                    is_demo: true
+                },
+                {
+                    original_name: "mountains.png",
+                    short_id: "c7e9d4",
+                    short_link: "https://imgup.pro/i/c7e9d4",
+                    long_link: "https://imgup.pro/uploads/c7e9d4.png",
+                    file_url: "https://images.unsplash.com/photo-1454496522488-7a8e488e8606?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80",
+                    qr_code: "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://imgup.pro/i/c7e9d4",
+                    is_demo: true
+                },
+                {
+                    original_name: "beach.jpg",
+                    short_id: "e8f2a1",
+                    short_link: "https://imgup.pro/i/e8f2a1",
+                    long_link: "https://imgup.pro/uploads/e8f2a1.jpg",
+                    file_url: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80",
+                    qr_code: "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://imgup.pro/i/e8f2a1",
+                    is_demo: true
+                }
+            ];
+            
+            // Event listeners
+            uploadArea.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+            showDemoBtn.addEventListener('click', () => showResults(demoResults, true));
+            hideDemoBtn.addEventListener('click', () => clearResults());
+            
+            // Handle drag and drop events
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            });
+            
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.classList.remove('dragover');
+            });
+            
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                if (e.dataTransfer.files.length > 0) {
+                    handleFiles(e.dataTransfer.files);
+                }
+            });
+            
+            // Form submission
+            uploadForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                if (filesInput.files.length === 0) {
+                    showFlash('Please select at least one image to upload');
+                    return;
+                }
+                
+                // Show loading state
+                uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
+                uploadBtn.disabled = true;
+                
+                // In a real app, this would submit to the server
+                // For demo purposes, we'll simulate an upload
+                simulateUpload(filesInput.files);
+            });
+            
+            // Copy button functionality
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.copy-btn')) {
+                    const button = e.target.closest('.copy-btn');
+                    const text = button.getAttribute('data-text');
+                    copyToClipboard(text, button);
+                }
+            });
+            
+            function handleFiles(files) {
+                if (files.length > 0) {
+                    // Check if all files are images
+                    for (let i = 0; i < files.length; i++) {
+                        if (!files[i].type.startsWith('image/')) {
+                            showFlash('Please select only image files');
+                            return;
+                        }
+                    }
+                    
+                    // Transfer files to the form input
+                    filesInput.files = files;
+                    
+                    // Update UI
+                    const uploadText = uploadArea.querySelector('.upload-text');
+                    uploadText.textContent = `${files.length} file(s) selected`;
+                    fileCount.textContent = `Total size: ${formatFileSize(calculateTotalSize(files))}`;
+                    
+                    // Enable upload button
+                    uploadBtn.disabled = false;
+                }
+            }
+            
+            function simulateUpload(files) {
+                // Simulate upload delay
+                setTimeout(() => {
+                    // Create mock results for the uploaded files
+                    const uploadResults = Array.from(files).map((file, index) => {
+                        const shortId = generateShortId();
+                        return {
+                            original_name: file.name,
+                            short_id: shortId,
+                            short_link: `https://imgup.pro/i/${shortId}`,
+                            long_link: `https://imgup.pro/uploads/${shortId}.${file.name.split('.').pop()}`,
+                            file_url: URL.createObjectURL(file),
+                            qr_code: `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://imgup.pro/i/${shortId}`,
+                            is_demo: false
+                        };
+                    });
+                    
+                    // Show the results
+                    showResults(uploadResults, false);
+                    
+                    // Reset upload button
+                    uploadBtn.innerHTML = '<i class="fas fa-upload"></i> Upload Images';
+                    uploadBtn.disabled = false;
+                    
+                    // Reset file input
+                    filesInput.value = '';
+                    fileInput.value = '';
+                    const uploadText = uploadArea.querySelector('.upload-text');
+                    uploadText.textContent = 'Drag & drop your images here';
+                    fileCount.textContent = '';
+                    
+                    showFlash('Files uploaded successfully!');
+                }, 2000);
+            }
+            
+            function generateShortId() {
+                return Math.random().toString(36).substring(2, 8).toUpperCase();
+            }
+            
+            function calculateTotalSize(files) {
+                let totalSize = 0;
+                for (let i = 0; i < files.length; i++) {
+                    totalSize += files[i].size;
+                }
+                return totalSize;
+            }
+            
+            function formatFileSize(bytes) {
+                if (bytes < 1024) return bytes + ' bytes';
+                else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+                else return (bytes / 1048576).toFixed(1) + ' MB';
+            }
+            
+            function showResults(results, isDemo) {
+                if (results.length === 0) {
+                    emptyState.style.display = 'block';
+                    resultsSection.innerHTML = '';
+                    return;
+                }
+                
+                emptyState.style.display = 'none';
+                resultsSection.innerHTML = '';
+                
+                results.forEach((result, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'result-card';
+                    card.innerHTML = `
+                        <div class="card-header">
+                            <div>
+                                <i class="fas fa-image"></i> ${result.original_name}
+                            </div>
+                            ${isDemo ? '<div class="demo-badge">DEMO</div>' : ''}
+                        </div>
+                        <div class="card-body">
+                            <img src="${result.file_url}" alt="Preview" class="image-preview">
+                            
+                            <div class="link-container">
+                                <div class="link-label">
+                                    <i class="fas fa-link"></i> Short Link
+                                </div>
+                                <div class="link-value">
+                                    ${result.short_link}
+                                    <button class="copy-btn" data-text="${result.short_link}">
+                                        <i class="fas fa-copy"></i> Copy
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="link-container">
+                                <div class="link-label">
+                                    <i class="fas fa-external-link-alt"></i> Direct Link
+                                </div>
+                                <div class="link-value">
+                                    ${result.long_link}
+                                    <button class="copy-btn" data-text="${result.long_link}">
+                                        <i class="fas fa-copy"></i> Copy
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="qr-section">
+                                <div class="link-label">
+                                    <i class="fas fa-qrcode"></i> QR Code
+                                </div>
+                                <div class="qr-code">
+                                    <img src="${result.qr_code}" alt="QR Code for ${result.short_link}">
+                                </div>
+                                <div class="action-buttons">
+                                    <button class="btn btn-sm copy-btn" data-text="${result.short_link}">
+                                        <i class="fas fa-copy"></i> Copy Link
+                                    </button>
+                                    <a href="${result.qr_code}" download="qrcode-${result.short_id}.png" class="btn btn-sm btn-success">
+                                        <i class="fas fa-download"></i> Download QR
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    resultsSection.appendChild(card);
+                    
+                    // Animate card with delay
+                    setTimeout(() => {
+                        card.classList.add('show');
+                    }, index * 100);
+                });
+            }
+            
+            function clearResults() {
+                resultsSection.innerHTML = '';
+                emptyState.style.display = 'block';
+            }
+            
+            function copyToClipboard(text, button) {
+                navigator.clipboard.writeText(text).then(() => {
+                    // Show feedback
+                    const originalHtml = button.innerHTML;
+                    const originalClass = button.className;
+                    
+                    button.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                    button.classList.add('copied');
+                    
+                    setTimeout(() => {
+                        button.innerHTML = originalHtml;
+                        button.className = originalClass;
+                    }, 2000);
+                }).catch(err => {
+                    console.error('Failed to copy: ', err);
+                    showFlash('Failed to copy to clipboard');
+                    
+                    // Fallback method for older browsers
+                    const textArea = document.createElement('textarea');
+                    textArea.value = text;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    
+                    // Show feedback even with fallback
+                    const originalHtml = button.innerHTML;
+                    const originalClass = button.className;
+                    
+                    button.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                    button.classList.add('copied');
+                    
+                    setTimeout(() => {
+                        button.innerHTML = originalHtml;
+                        button.className = originalClass;
+                    }, 2000);
+                });
+            }
+            
+            function showFlash(message) {
+                flashText.textContent = message;
+                flashMessage.style.display = 'block';
+                
+                setTimeout(() => {
+                    flashMessage.style.display = 'none';
+                }, 5000);
+            }
+        });
+    </script>
+</body>
+</html>

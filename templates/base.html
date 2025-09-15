@@ -1,0 +1,1353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PicFlow - Ultimate Image Sharing</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6C63FF;
+            --secondary: #4A40E5;
+            --accent: #FF6B8B;
+            --success: #36D1DC;
+            --warning: #FFA62E;
+            --light: #f8f9fa;
+            --dark: #1A1A2E;
+            --gray: #6c757d;
+            --card-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            
+            --bg-color: #1A1A2E;
+            --text-color: #f8f9fa;
+            --card-bg: rgba(26, 26, 46, 0.95);
+            --footer-bg: rgba(10, 10, 20, 0.98);
+            --section-bg: rgba(0, 0, 0, 0.2);
+            --nav-bg: rgba(26, 26, 46, 0.98);
+            --upload-area-bg: rgba(0, 0, 0, 0.2);
+            --upload-text-color: #f8f9fa;
+            --feature-bg: rgba(26, 26, 46, 0.8);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(-45deg, #6C63FF, #36D1DC, #4A40E5, #FF6B8B);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: var(--text-color);
+            min-height: 100vh;
+            line-height: 1.6;
+            overflow-x: hidden;
+            background-color: var(--bg-color);
+        }
+        
+        /* Improved Navbar */
+        .navbar {
+            background: var(--nav-bg);
+            backdrop-filter: blur(10px);
+            padding: 0.8rem 5%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: var(--transition);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 800;
+            font-size: 1.8rem;
+            color: white;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .logo-icon {
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            box-shadow: 0 5px 15px rgba(108, 99, 255, 0.5);
+            animation: pulse 2s infinite;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+            padding: 8px 0;
+            font-size: 1.1rem;
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(to right, var(--accent), var(--warning));
+            transition: var(--transition);
+            border-radius: 3px;
+        }
+        
+        .nav-links a:hover {
+            color: white;
+        }
+        
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        
+        .nav-links a.active {
+            color: white;
+        }
+        
+        .nav-links a.active::after {
+            width: 100%;
+        }
+        
+        .cta-button {
+            background: linear-gradient(45deg, var(--accent), var(--warning));
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 5px 15px rgba(255, 107, 139, 0.4);
+            position: relative;
+            overflow: hidden;
+            font-size: 1.1rem;
+        }
+        
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+        
+        .cta-button:hover::before {
+            left: 100%;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 107, 139, 0.6);
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        /* Hero Section */
+        .hero {
+            padding: 150px 5% 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .floating-element {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .floating-element:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+        
+        .floating-element:nth-child(2) {
+            width: 50px;
+            height: 50px;
+            top: 20%;
+            right: 15%;
+            animation-delay: 1s;
+        }
+        
+        .floating-element:nth-child(3) {
+            width: 70px;
+            height: 70px;
+            bottom: 20%;
+            left: 15%;
+            animation-delay: 2s;
+        }
+        
+        .hero h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            background: linear-gradient(to right, #FFD166, var(--accent), var(--success));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: shine 3s linear infinite;
+        }
+        
+        .hero p {
+            font-size: 1.3rem;
+            max-width: 700px;
+            margin-bottom: 2.5rem;
+            opacity: 0.9;
+            color: white;
+        }
+        
+        .upload-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 800px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            animation: cardAppear 0.8s ease-out;
+            backdrop-filter: blur(10px);
+        }
+        
+        .upload-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: rotate(45deg);
+            animation: shineBorder 4s linear infinite;
+        }
+        
+        .upload-area {
+            border: 3px dashed rgba(108, 99, 255, 0.3);
+            border-radius: 15px;
+            padding: 50px 30px;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-bottom: 25px;
+            text-align: center;
+            position: relative;
+            background: var(--upload-area-bg);
+        }
+        
+        .upload-area:hover {
+            border-color: var(--accent);
+            background: rgba(108, 99, 255, 0.1);
+            transform: scale(1.02);
+        }
+        
+        .upload-area i {
+            font-size: 4rem;
+            color: #FFD166;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(255, 209, 102, 0.6);
+        }
+        
+        .upload-text {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+            color: var(--upload-text-color);
+        }
+        
+        .upload-hint {
+            color: var(--upload-text-color);
+            opacity: 0.8;
+            font-size: 1rem;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .upload-btn {
+            background: linear-gradient(45deg, var(--accent), var(--warning));
+            color: white;
+            border: none;
+            padding: 16px 35px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 5px 20px rgba(255, 107, 139, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .upload-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 30px rgba(255, 107, 139, 0.7);
+        }
+        
+        /* Demo Section */
+        .demo-section {
+            padding: 80px 5%;
+            background: var(--section-bg);
+            backdrop-filter: blur(10px);
+            transition: var(--transition);
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 50px;
+            color: var(--text-color);
+            transition: var(--transition);
+        }
+        
+        .steps {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .step-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 30px;
+            width: 300px;
+            text-align: center;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            animation: cardAppear 0.8s ease-out;
+            animation-fill-mode: backwards;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .step-card:nth-child(1) {
+            animation-delay: 0.2s;
+        }
+        
+        .step-card:nth-child(2) {
+            animation-delay: 0.4s;
+        }
+        
+        .step-card:nth-child(3) {
+            animation-delay: 0.6s;
+        }
+        
+        .step-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: var(--transition);
+        }
+        
+        .step-card:hover {
+            transform: translateY(-10px) scale(1.03);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+        
+        .step-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .step-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+            transition: var(--transition);
+        }
+        
+        .step-card:hover .step-icon {
+            transform: scale(1.2) rotate(5deg);
+            color: var(--accent);
+        }
+        
+        .step-title {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--text-color);
+            transition: var(--transition);
+        }
+        
+        .step-description {
+            color: var(--text-color);
+            opacity: 0.8;
+            transition: var(--transition);
+        }
+        
+        /* Features Section */
+        .features-section {
+            padding: 80px 5%;
+            background: var(--section-bg);
+            transition: var(--transition);
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+        
+        .feature-card {
+            background: var(--feature-bg);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            animation: cardAppear 0.8s ease-out;
+            animation-fill-mode: backwards;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .feature-card:nth-child(1) {
+            animation-delay: 0.2s;
+        }
+        
+        .feature-card:nth-child(2) {
+            animation-delay: 0.4s;
+        }
+        
+        .feature-card:nth-child(3) {
+            animation-delay: 0.6s;
+        }
+        
+        .feature-card:nth-child(4) {
+            animation-delay: 0.8s;
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+            transition: var(--transition);
+        }
+        
+        .feature-card:hover .feature-icon {
+            transform: scale(1.2);
+            color: var(--accent);
+        }
+        
+        .feature-title {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--text-color);
+        }
+        
+        .feature-description {
+            color: var(--text-color);
+            opacity: 0.8;
+        }
+        
+        /* Tools Section */
+        .tools-section {
+            padding: 80px 5%;
+            background: var(--section-bg);
+            transition: var(--transition);
+        }
+        
+        .tools-container {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .tool-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 30px;
+            width: 250px;
+            text-align: center;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            animation: cardAppear 0.8s ease-out;
+            animation-fill-mode: backwards;
+        }
+        
+        .tool-card:nth-child(1) {
+            animation-delay: 0.2s;
+        }
+        
+        .tool-card:nth-child(2) {
+            animation-delay: 0.4s;
+        }
+        
+        .tool-card:nth-child(3) {
+            animation-delay: 0.6s;
+        }
+        
+        .tool-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+        
+        .tool-title {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--text-color);
+        }
+        
+        .tool-description {
+            color: var(--text-color);
+            opacity: 0.8;
+        }
+        
+        /* Results Section */
+        .results-section {
+            padding: 80px 5%;
+            background: var(--section-bg);
+        }
+        
+        .results-container {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 30px;
+            box-shadow: var(--card-shadow);
+        }
+        
+        .result-item {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .result-item:last-child {
+            border-bottom: none;
+        }
+        
+        .result-thumbnail {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+        
+        .result-details {
+            flex: 1;
+        }
+        
+        .result-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .result-url {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 8px 15px;
+            margin-top: 10px;
+        }
+        
+        .url-text {
+            flex: 1;
+            font-family: monospace;
+            font-size: 0.9rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .copy-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .copy-btn:hover {
+            background: var(--secondary);
+        }
+        
+        .result-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 15px;
+            border-radius: 8px;
+            border: none;
+            background: var(--primary);
+            color: white;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .action-btn:hover {
+            background: var(--secondary);
+        }
+        
+        /* Footer */
+        .footer {
+            background: var(--footer-bg);
+            color: white;
+            padding: 60px 5% 30px;
+            margin-top: 50px;
+            transition: var(--transition);
+        }
+        
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 40px;
+            justify-content: space-between;
+            margin-bottom: 40px;
+        }
+        
+        .footer-column {
+            flex: 1;
+            min-width: 250px;
+        }
+        
+        .footer-column h3 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+            color: white;
+        }
+        
+        .footer-column h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(to right, var(--accent), var(--warning));
+            border-radius: 3px;
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+        
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .footer-links a:hover {
+            color: white;
+            transform: translateX(5px);
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+        
+        .footer-links a i {
+            color: var(--accent);
+        }
+        
+        .footer-social {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            transition: var(--transition);
+        }
+        
+        .social-icon:hover {
+            background: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(108, 99, 255, 0.4);
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        /* Scroll to Top Button */
+        .scroll-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--accent), var(--warning));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 5px 15px rgba(255, 107, 139, 0.4);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+        }
+        
+        .scroll-to-top.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .scroll-to-top:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(255, 107, 139, 0.6);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .nav-links {
+                gap: 1.8rem;
+            }
+            
+            .hero h1 {
+                font-size: 3.2rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 0.8rem;
+            }
+            
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: rgba(26, 26, 46, 0.98);
+                backdrop-filter: blur(10px);
+                padding: 1.5rem;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
+            }
+            
+            .nav-links.active {
+                display: flex;
+            }
+            
+            .nav-links a {
+                padding: 12px 0;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            }
+            
+            .nav-links a:last-child {
+                border-bottom: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .hero h1 {
+                font-size: 2.8rem;
+            }
+            
+            .upload-card {
+                padding: 25px;
+            }
+            
+            .cta-button {
+                padding: 10px 20px;
+                font-size: 1rem;
+            }
+            
+            .steps, .features-grid, .tools-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                gap: 30px;
+            }
+            
+            .result-item {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .result-actions {
+                justify-content: center;
+            }
+        }
+        
+        /* Animations */
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(10deg); }
+            100% { transform: translateY(0) rotate(0deg); }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 5px 15px rgba(108, 99, 255, 0.5); }
+            50% { transform: scale(1.05); box-shadow: 0 8px 25px rgba(108, 99, 255, 0.7); }
+            100% { transform: scale(1); box-shadow: 0 5px 15px rgba(108, 99, 255, 0.5); }
+        }
+        
+        @keyframes shine {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        
+        @keyframes shineBorder {
+            0% { transform: rotate(45deg) translateX(-100%); }
+            100% { transform: rotate(45deg) translateX(100%); }
+        }
+        
+        @keyframes cardAppear {
+            0% { 
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            100% { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Improved Navbar -->
+    <nav class="navbar">
+        <div class="logo">
+            <div class="logo-icon">
+                <i class="fas fa-bolt"></i>
+            </div>
+            <span>PicFlow</span>
+        </div>
+        
+        <div class="nav-links">
+            <a href="#home" class="active">Home</a>
+            <a href="#how-to-use">How to Use</a>
+            <a href="#features">Features</a>
+            <a href="#tools">Tools</a>
+        </div>
+        
+        <div>
+            <button class="cta-button">Get Started</button>
+        </div>
+        
+        <button class="mobile-menu-btn">
+            <i class="fas fa-bars"></i>
+        </button>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+        
+        <h1>Transform Your Image Sharing Experience</h1>
+        <p>Upload, shorten, and share your images with beautiful short links and QR codes. Fast, secure, and stunningly simple.</p>
+        
+        <div class="upload-card">
+            <div class="upload-area" id="uploadArea">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <p class="upload-text">Drag & drop your images here</p>
+                <p class="upload-hint">or click to browse files</p>
+                <input type="file" class="file-input" id="fileInput" accept="image/*" multiple>
+            </div>
+            <button class="upload-btn" id="uploadBtn">
+                <i class="fas fa-upload"></i> Upload Images
+            </button>
+        </div>
+    </section>
+
+    <!-- Demo Section -->
+    <section class="demo-section" id="how-to-use">
+        <h2 class="section-title">How to Use PicFlow</h2>
+        <div class="steps">
+            <div class="step-card">
+                <div class="step-icon">
+                    <i class="fas fa-upload"></i>
+                </div>
+                <h3 class="step-title">Step 1: Upload</h3>
+                <p class="step-description">Drag and drop your images or click to browse files from your device. We support JPG, PNG, GIF, and WebP formats.</p>
+            </div>
+            
+            <div class="step-card">
+                <div class="step-icon">
+                    <i class="fas fa-link"></i>
+                </div>
+                <h3 class="step-title">Step 2: Copy Links</h3>
+                <p class="step-description">Get shortened URLs and QR codes for easy sharing. Our links are optimized for social media and messaging apps.</p>
+            </div>
+            
+            <div class="step-card">
+                <div class="step-icon">
+                    <i class="fas fa-share-alt"></i>
+                </div>
+                <h3 class="step-title">Step 3: Share</h3>
+                <p class="step-description">Share your images with anyone using the short links or QR codes. Track views and manage your uploads.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section" id="features">
+        <h2 class="section-title">Amazing Features</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-rocket"></i>
+                </div>
+                <h3 class="feature-title">Lightning Fast</h3>
+                <p class="feature-description">Upload and share your images in seconds with our optimized infrastructure.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3 class="feature-title">Secure & Private</h3>
+                <p class="feature-description">Your images are encrypted and protected with advanced security measures.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3 class="feature-title">Analytics</h3>
+                <p class="feature-description">Track views, downloads, and engagement with detailed analytics.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-infinity"></i>
+                </div>
+                <h3 class="feature-title">Unlimited Bandwidth</h3>
+                <p class="feature-description">Share without worries with our unlimited bandwidth policy.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tools Section -->
+    <section class="tools-section" id="tools">
+        <h2 class="section-title">Powerful Tools</h2>
+        <div class="tools-container">
+            <div class="tool-card">
+                <div class="tool-icon">
+                    <i class="fas fa-qrcode"></i>
+                </div>
+                <h3 class="tool-title">QR Codes</h3>
+                <p class="tool-description">Generate QR codes for your images with custom colors and styles.</p>
+            </div>
+            
+            <div class="tool-card">
+                <div class="tool-icon">
+                    <i class="fas fa-link"></i>
+                </div>
+                <h3 class="tool-title">URL Shortening</h3>
+                <p class="tool-description">Create short, memorable links for easy sharing.</p>
+            </div>
+            
+            <div class="tool-card">
+                <div class="tool-icon">
+                    <i class="fas fa-image"></i>
+                </div>
+                <h3 class="tool-title">Image Optimization</h3>
+                <p class="tool-description">Automatically optimize images for faster loading and better quality.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Results Section (initially hidden) -->
+    <section class="results-section" id="results" style="display: none;">
+        <h2 class="section-title">Your Uploaded Images</h2>
+        <div class="results-container" id="resultsContainer">
+            <!-- Results will be populated here by JavaScript -->
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-column">
+                <h3>About PicFlow</h3>
+                <p>PicFlow is the ultimate image sharing platform that allows you to upload, share, and manage your images with beautiful short links and QR codes.</p>
+                <div class="footer-social">
+                    <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Quick Links</h3>
+                <ul class="footer-links">
+                    <li><a href="#home"><i class="fas fa-chevron-right"></i> Home</a></li>
+                    <li><a href="#how-to-use"><i class="fas fa-chevron-right"></i> How to Use</a></li>
+                    <li><a href="#features"><i class="fas fa-chevron-right"></i> Features</a></li>
+                    <li><a href="#tools"><i class="fas fa-chevron-right"></i> Tools</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Features</h3>
+                <ul class="footer-links">
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Image Upload</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> URL Shortening</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> QR Code Generation</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Analytics</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Privacy Controls</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Contact Us</h3>
+                <ul class="footer-links">
+                    <li><a href="#"><i class="fas fa-map-marker-alt"></i> 123 Image Street, Pixel City</a></li>
+                    <li><a href="#"><i class="fas fa-phone"></i> +1 (555) 123-4567</a></li>
+                    <li><a href="#"><i class="fas fa-envelope"></i> support@picflow.com</a></li>
+                    <li><a href="#"><i class="fas fa-globe"></i> www.picflow.com</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2023 PicFlow. All rights reserved. Designed with <i class="fas fa-heart" style="color: var(--accent);"></i> for creators.</p>
+        </div>
+    </footer>
+
+    <!-- Scroll to Top Button -->
+    <div class="scroll-to-top" id="scrollToTop">
+        <i class="fas fa-arrow-up"></i>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mobile menu toggle
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            const navLinks = document.querySelector('.nav-links');
+            
+            mobileMenuBtn.addEventListener('click', function() {
+                navLinks.classList.toggle('active');
+                
+                if (navLinks.classList.contains('active')) {
+                    this.innerHTML = '<i class="fas fa-times"></i>';
+                } else {
+                    this.innerHTML = '<i class="fas fa-bars"></i>';
+                }
+            });
+            
+            // Close mobile menu when clicking on a link
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.addEventListener('click', function() {
+                    navLinks.classList.remove('active');
+                    mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+                });
+            });
+            
+            // Navbar scroll effect
+            window.addEventListener('scroll', function() {
+                const navbar = document.querySelector('.navbar');
+                if (window.scrollY > 50) {
+                    navbar.style.background = 'var(--nav-bg)';
+                    navbar.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.3)';
+                } else {
+                    navbar.style.background = 'var(--nav-bg)';
+                    navbar.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.2)';
+                }
+            });
+            
+            // Active link highlighting
+            const sections = document.querySelectorAll('section');
+            const navItems = document.querySelectorAll('.nav-links a');
+            
+            window.addEventListener('scroll', function() {
+                let current = '';
+                
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    
+                    if (pageYOffset >= (sectionTop - 200)) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                
+                navItems.forEach(item => {
+                    item.classList.remove('active');
+                    if (item.getAttribute('href').substring(1) === current) {
+                        item.classList.add('active');
+                    }
+                });
+            });
+            
+            // Upload area functionality
+            const uploadArea = document.querySelector('.upload-area');
+            const fileInput = document.querySelector('.file-input');
+            const uploadBtn = document.querySelector('.upload-btn');
+            
+            uploadArea.addEventListener('click', () => {
+                fileInput.click();
+            });
+            
+            uploadBtn.addEventListener('click', () => {
+                fileInput.click();
+            });
+            
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.style.borderColor = 'var(--accent)';
+                uploadArea.style.backgroundColor = 'rgba(108, 99, 255, 0.1)';
+            });
+            
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.style.borderColor = 'rgba(108, 99, 255, 0.3)';
+                uploadArea.style.backgroundColor = '';
+            });
+            
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                if (e.dataTransfer.files.length > 0) {
+                    fileInput.files = e.dataTransfer.files;
+                    const uploadText = uploadArea.querySelector('.upload-text');
+                    uploadText.textContent = `${e.dataTransfer.files.length} file(s) selected`;
+                    uploadArea.style.borderColor = 'var(--accent)';
+                    uploadArea.style.backgroundColor = 'rgba(108, 99, 255, 0.1)';
+                    handleFileUpload(e.dataTransfer.files);
+                }
+            });
+            
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    const uploadText = uploadArea.querySelector('.upload-text');
+                    uploadText.textContent = `${e.target.files.length} file(s) selected`;
+                    uploadArea.style.borderColor = 'var(--accent)';
+                    uploadArea.style.backgroundColor = 'rgba(108, 99, 255, 0.1)';
+                    handleFileUpload(e.target.files);
+                }
+            });
+            
+            // Scroll to top functionality
+            const scrollToTopBtn = document.getElementById('scrollToTop');
+            
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    scrollToTopBtn.classList.add('active');
+                } else {
+                    scrollToTopBtn.classList.remove('active');
+                }
+            });
+            
+            scrollToTopBtn.addEventListener('click', () => {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+            
+            // Smooth scrolling for navigation links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+            
+            // Function to handle file upload (simulated for demo)
+            function handleFileUpload(files) {
+                const resultsSection = document.getElementById('results');
+                const resultsContainer = document.getElementById('resultsContainer');
+                
+                // Clear previous results
+                resultsContainer.innerHTML = '';
+                
+                // Show results section
+                resultsSection.style.display = 'block';
+                
+                // Simulate processing each file
+                Array.from(files).forEach((file, index) => {
+                    // Create a mock result (in a real app, this would come from the server)
+                    setTimeout(() => {
+                        const shortId = 'xYz' + (index + 1) + 'Ab';
+                        const shortLink = `${window.location.origin}/i/${shortId}`;
+                        
+                        const resultItem = document.createElement('div');
+                        resultItem.className = 'result-item';
+                        resultItem.innerHTML = `
+                            <img src="${URL.createObjectURL(file)}" alt="${file.name}" class="result-thumbnail">
+                            <div class="result-details">
+                                <div class="result-title">${file.name}</div>
+                                <small>Uploaded successfully</small>
+                                <div class="result-url">
+                                    <div class="url-text">${shortLink}</div>
+                                    <button class="copy-btn" data-url="${shortLink}">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="result-actions">
+                                <button class="action-btn" data-url="${shortLink}">
+                                    <i class="fas fa-link"></i> Copy Link
+                                </button>
+                                <button class="action-btn" data-url="${shortLink}">
+                                    <i class="fas fa-download"></i> Download QR
+                                </button>
+                                <button class="action-btn" data-url="${shortLink}">
+                                    <i class="fas fa-share-alt"></i> Share
+                                </button>
+                            </div>
+                        `;
+                        
+                        resultsContainer.appendChild(resultItem);
+                        
+                        // Add event listeners to the buttons
+                        resultItem.querySelectorAll('.copy-btn').forEach(btn => {
+                            btn.addEventListener('click', () => {
+                                const url = btn.getAttribute('data-url');
+                                navigator.clipboard.writeText(url).then(() => {
+                                    const originalHtml = btn.innerHTML;
+                                    btn.innerHTML = '<i class="fas fa-check"></i>';
+                                    setTimeout(() => {
+                                        btn.innerHTML = originalHtml;
+                                    }, 2000);
+                                });
+                            });
+                        });
+                        
+                        resultItem.querySelectorAll('.action-btn').forEach(btn => {
+                            btn.addEventListener('click', () => {
+                                const url = btn.getAttribute('data-url');
+                                if (btn.querySelector('.fa-link')) {
+                                    navigator.clipboard.writeText(url).then(() => {
+                                        const originalHtml = btn.innerHTML;
+                                        btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                                        setTimeout(() => {
+                                            btn.innerHTML = originalHtml;
+                                        }, 2000);
+                                    });
+                                } else if (btn.querySelector('.fa-download')) {
+                                    // In a real app, this would download the actual QR code
+                                    const a = document.createElement('a');
+                                    a.href = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(url)}`;
+                                    a.download = 'qrcode.png';
+                                    document.body.appendChild(a);
+                                    a.click();
+                                    document.body.removeChild(a);
+                                } else if (btn.querySelector('.fa-share-alt')) {
+                                    if (navigator.share) {
+                                        navigator.share({
+                                            title: 'Check out this image',
+                                            text: 'I shared an image using PicFlow',
+                                            url: url
+                                        }).catch(console.error);
+                                    } else {
+                                        navigator.clipboard.writeText(url).then(() => {
+                                            alert('Link copied to clipboard!');
+                                        });
+                                    }
+                                }
+                            });
+                        });
+                    }, index * 300);
+                });
+                
+                // Scroll to results
+                resultsSection.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    </script>
+</body>
+</html>
